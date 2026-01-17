@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ShoppingCart, Star, Truck, Plane } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -17,6 +18,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({
+  id,
   name,
   price,
   originalPrice,
@@ -39,17 +41,18 @@ const ProductCard = ({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -8 }}
-      transition={{ duration: 0.3 }}
-      className="product-card bg-card rounded-2xl overflow-hidden border border-border/50 relative group"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-muted">
+    <Link to={`/product/${id}`}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{ y: -8 }}
+        transition={{ duration: 0.3 }}
+        className="product-card bg-card rounded-2xl overflow-hidden border border-border/50 relative group"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* Image Container */}
+        <div className="relative aspect-square overflow-hidden bg-muted">
         <img
           src={image}
           alt={name}
@@ -151,6 +154,7 @@ const ProductCard = ({
         </div>
       </div>
     </motion.div>
+    </Link>
   );
 };
 
