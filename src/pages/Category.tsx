@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useProductsGraphQL } from "@/lib/hooks/useGraphQL";
+import { useProductsByCategoryGraphQL } from "@/lib/hooks/useGraphQL";
 import ProductGrid from "@/components/home/ProductGrid";
 
 const Category = () => {
@@ -9,12 +9,11 @@ const Category = () => {
     data: productsData,
     isLoading: loading,
     error,
-  } = useProductsGraphQL({
+  } = useProductsByCategoryGraphQL(slug!, {
     first: 20,
-    where: { category: slug },
   });
 
-  const products = productsData?.products?.nodes || [];
+  const products = productsData?.nodes || [];
 
   if (loading) {
     return (

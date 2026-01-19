@@ -18,7 +18,7 @@ const Shop = () => {
     where: selectedCategory ? { category: selectedCategory } : undefined,
   });
 
-  const products = productsData?.products?.nodes || [];
+  const products = productsData?.nodes || [];
 
   const filteredProducts =
     products?.filter((product: any) =>

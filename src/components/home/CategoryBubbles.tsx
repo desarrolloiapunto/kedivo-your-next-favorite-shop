@@ -52,9 +52,8 @@ const CategoryBubbles = () => {
     data: categoriesData,
     isLoading: loading,
     error,
-  } = useCategoriesGraphQL();
-  const categories =
-    categoriesData?.productCategories?.nodes?.slice(0, 8) || [];
+  } = useCategoriesGraphQL(20);
+  const categories = categoriesData?.slice(0, 8) || [];
 
   // Fallback images for categories
   const getCategoryImage = (slug: string) => {
