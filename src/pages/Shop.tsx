@@ -23,7 +23,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-const PRODUCTS_PER_PAGE = 12;
+const PRODUCTS_PER_PAGE = 24; // Aumentar productos por página para mejor UX
+const INITIAL_LOAD = 48; // Cargar 48 productos inicialmente (2 páginas)
 
 export interface Filters {
   priceRange: [number, number];
@@ -41,13 +42,13 @@ const Shop = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  // Fetch all products from GraphQL
+  // Fetch products with optimized loading strategy
   const {
     data: productsData,
     isLoading,
     error,
   } = useProductsGraphQL({
-    first: 100, // Fetch more products for client-side filtering
+    first: INITIAL_LOAD, // Start with smaller initial load (48 products)
   });
 
   const rawProducts = productsData?.nodes
@@ -96,25 +97,15 @@ const Shop = () => {
     currentPage * PRODUCTS_PER_PAGE,
   );
 
-  // Debug: mostrar estadísticas completas
-  console.log(
-    "Productos crudos desde GraphQL:",
-    productsData?.nodes?.length || 0,
-  );
-  console.log("Productos normalizados:", rawProducts.length);
-  console.log("Productos filtrados:", filteredProducts.length);
-  console.log("Productos en página actual:", paginatedProducts.length);
-  console.log("Productos por página:", PRODUCTS_PER_PAGE);
-  console.log("Página actual:", currentPage);
-  console.log("Total páginas:", totalPages);
-  console.log(
-    "Primeros 3 productos:",
-    rawProducts.slice(0, 3).map((p) => ({
-      name: p.name,
-      price: p.price,
-      parsedPrice: cleanPrice(p.price),
-    })),
-  );
+  // Debug: mostrar estadísticas (solo en desarrollo)
+  if (import.meta.env.DEV) {
+    console.log("📊 Estadísticas de productos:");
+    console.log("  - Crudos desde GraphQL:", productsData?.nodes?.length || 0);
+    console.log("  - Normalizados:", rawProducts.length);
+    console.log("  - Filtrados:", filteredProducts.length);
+    console.log("  - En página actual:", paginatedProducts.length);
+    console.log("  - Total páginas:", totalPages);
+  }
 
   const clearFilters = () => {
     setFilters({

@@ -81,33 +81,54 @@ export const useCategoriesGraphQL = (first: number = 20) => {
   });
 };
 
+// Hook para cargar TODOS los productos usando paginación del servidor
 export const useProductsGraphQL = (variables?: {
   first?: number;
   after?: string;
   where?: any;
 }) => {
   return useQuery({
-    queryKey: ["products-graphql", variables],
+    queryKey: ["products-graphql-all"],
     queryFn: async () => {
       try {
-        // Usar la query completa que funciona - aumentar límite para todos los productos
-        const data = await makeGraphQLRequest(GET_PRODUCTS, {
-          first: variables?.first || 500, // Aumentar límite para capturar todos los productos (209+)
-          after: variables?.after,
-          where: variables?.where,
-        });
-        console.log(
-          "GraphQL Response - Total products:",
-          data.products.nodes?.length || 0,
-        );
-        return data.products;
+        const allProducts: any[] = [];
+        let hasNextPage = true;
+        let endCursor: string | null = null;
+
+        // Cargar productos por páginas hasta obtener todos
+        while (hasNextPage && allProducts.length < 1000) {
+          // Límite de seguridad
+          const data = await makeGraphQLRequest(GET_PRODUCTS, {
+            first: 100, // Máximo por página que permite GraphQL
+            after: endCursor,
+            where: variables?.where,
+          });
+
+          if (data.products.nodes) {
+            allProducts.push(...data.products.nodes);
+          }
+
+          hasNextPage = data.products.pageInfo?.hasNextPage || false;
+          endCursor = data.products.pageInfo?.endCursor || null;
+        }
+
+        console.log("Total products loaded:", allProducts.length);
+
+        return {
+          nodes: allProducts,
+          pageInfo: {
+            hasNextPage: false,
+            endCursor: null,
+          },
+        };
       } catch (error) {
         console.error("GraphQL Error:", error);
         // Fallback: devolver datos vacíos
         return { nodes: [], pageInfo: { hasNextPage: false, endCursor: null } };
       }
     },
-    select: (data) => data,
+    staleTime: 5 * 60 * 1000, // Cache por 5 minutos
+    gcTime: 10 * 60 * 1000, // Garbage collection después de 10 minutos
   });
 };
 
