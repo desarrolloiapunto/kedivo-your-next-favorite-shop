@@ -23,10 +23,9 @@ const Shop = () => {
     ? normalizeProducts(productsData.nodes)
     : [];
 
-  const filteredProducts =
-    products?.filter((product: any) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()),
-    ) || [];
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
 
   if (isLoading) {
     return (

@@ -33,6 +33,11 @@ export interface NormalizedProduct {
   reviewsAllowed?: boolean;
   averageRating?: number;
   reviewCount?: number;
+  // Campos calculados para el diseño
+  discount?: number; // Porcentaje de descuento
+  isNational?: boolean; // Envío nacional vs internacional
+  isNew?: boolean; // Producto nuevo
+  shippingDays?: string; // Texto de días de envío
   image?: {
     sourceUrl: string;
     altText?: string;
@@ -67,8 +72,85 @@ export interface NormalizedProduct {
   }>;
 }
 
+// Helper functions for product calculations
+function calculateDiscount(
+  regularPrice: string | undefined,
+  salePrice: string | undefined,
+): number | undefined {
+  if (!regularPrice || !salePrice) return undefined;
+
+  const regular = parseFloat(regularPrice);
+  const sale = parseFloat(salePrice);
+
+  if (regular <= 0 || sale >= regular) return undefined;
+
+  return Math.round(((regular - sale) / regular) * 100);
+}
+
+function determineShipping(product: any): {
+  isNational: boolean;
+  shippingDays: string;
+} {
+  // Lógica para determinar envío nacional vs internacional
+  // Basado en metadata, atributos o precio del producto
+
+  // Verificar metadata específica para envío
+  const shippingMeta = product.metaData?.find(
+    (meta: any) =>
+      meta.key === "_shipping_zone" || meta.key === "shipping_zone",
+  );
+
+  if (shippingMeta) {
+    const isNational =
+      shippingMeta.value.toLowerCase().includes("nacional") ||
+      shippingMeta.value.toLowerCase().includes("colombia");
+    const shippingDays = isNational ? "2-4 días" : "15-20 días";
+    return { isNational, shippingDays };
+  }
+
+  // Verificar atributos de envío
+  const shippingAttribute = product.attributes?.find(
+    (attr: any) =>
+      attr.name?.toLowerCase().includes("envio") ||
+      attr.name?.toLowerCase().includes("shipping"),
+  );
+
+  if (shippingAttribute && shippingAttribute.options) {
+    const hasInternational = shippingAttribute.options.some(
+      (option: string) =>
+        option.toLowerCase().includes("internacional") ||
+        option.toLowerCase().includes("internacional"),
+    );
+
+    if (hasInternational) {
+      // Si tiene opción internacional, asumimos internacional por defecto
+      return { isNational: false, shippingDays: "15-20 días" };
+    }
+  }
+
+  // Lógica basada en precio: productos caros tienden a ser importados
+  const price = parseFloat(product.price || "0");
+  if (price > 500000) {
+    // Productos > $500.000 tienden a ser importados
+    return { isNational: false, shippingDays: "15-20 días" };
+  }
+
+  // Por defecto nacional para productos colombianos
+  return { isNational: true, shippingDays: "2-4 días" };
+}
+
+function isNewProduct(product: any): boolean {
+  // Lógica para determinar si un producto es "nuevo"
+  // Por defecto usamos el campo featured, pero se puede mejorar
+  return product.featured || false;
+}
+
 // Normalize WooCommerce GraphQL product data to a consistent structure
 export function normalizeProduct(product: any): NormalizedProduct {
+  const discount = calculateDiscount(product.regularPrice, product.salePrice);
+  const { isNational, shippingDays } = determineShipping(product);
+  const isNew = isNewProduct(product);
+
   return {
     id: product.id,
     databaseId: product.databaseId,
@@ -94,6 +176,11 @@ export function normalizeProduct(product: any): NormalizedProduct {
     reviewsAllowed: product.reviewsAllowed,
     averageRating: parseFloat(product.averageRating) || 0,
     reviewCount: product.reviewCount,
+    // Campos calculados
+    discount,
+    isNational,
+    isNew,
+    shippingDays,
     image: product.image
       ? {
           sourceUrl: product.image.sourceUrl,

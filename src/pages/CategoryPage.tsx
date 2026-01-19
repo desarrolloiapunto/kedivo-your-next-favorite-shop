@@ -303,8 +303,9 @@ const CategoryPage = () => {
                     image={product.image?.sourceUrl || ""}
                     rating={product.averageRating || 0}
                     reviews={product.reviewCount || 0}
-                    isNational={true} // Default to national shipping
-                    isNew={product.status === "publish" && product.featured}
+                    isNational={product.isNational}
+                    discount={product.discount}
+                    isNew={product.isNew}
                   />
                 ))}
               </motion.div>
