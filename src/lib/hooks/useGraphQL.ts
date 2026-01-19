@@ -90,12 +90,16 @@ export const useProductsGraphQL = (variables?: {
     queryKey: ["products-graphql", variables],
     queryFn: async () => {
       try {
-        // Usar la query completa que funciona
+        // Usar la query completa que funciona - aumentar límite para todos los productos
         const data = await makeGraphQLRequest(GET_PRODUCTS, {
-          first: variables?.first || 20,
+          first: variables?.first || 500, // Aumentar límite para capturar todos los productos (209+)
           after: variables?.after,
           where: variables?.where,
         });
+        console.log(
+          "GraphQL Response - Total products:",
+          data.products.nodes?.length || 0,
+        );
         return data.products;
       } catch (error) {
         console.error("GraphQL Error:", error);

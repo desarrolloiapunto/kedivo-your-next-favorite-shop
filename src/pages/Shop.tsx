@@ -60,7 +60,7 @@ const Shop = () => {
 
     // Price filter
     result = result.filter((p) => {
-      const price = parseFloat(p.price || "0");
+      const price = cleanPrice(p.price);
       return price >= filters.priceRange[0] && price <= filters.priceRange[1];
     });
 
@@ -72,14 +72,10 @@ const Shop = () => {
     // Sorting
     switch (sortBy) {
       case "price-asc":
-        result.sort(
-          (a, b) => parseFloat(a.price || "0") - parseFloat(b.price || "0"),
-        );
+        result.sort((a, b) => cleanPrice(a.price) - cleanPrice(b.price));
         break;
       case "price-desc":
-        result.sort(
-          (a, b) => parseFloat(b.price || "0") - parseFloat(a.price || "0"),
-        );
+        result.sort((a, b) => cleanPrice(b.price) - cleanPrice(a.price));
         break;
       case "rating":
         result.sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0));
