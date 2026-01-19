@@ -7,7 +7,7 @@ const Category = () => {
 
   const {
     data: productsData,
-    loading,
+    isLoading: loading,
     error,
   } = useProductsGraphQL({
     first: 20,

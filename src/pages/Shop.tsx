@@ -11,7 +11,7 @@ const Shop = () => {
 
   const {
     data: productsData,
-    loading: isLoading,
+    isLoading,
     error,
   } = useProductsGraphQL({
     first: 20,

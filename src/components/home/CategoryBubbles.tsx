@@ -48,7 +48,11 @@ const getCategoryColor = (slug: string) => {
 };
 
 const CategoryBubbles = () => {
-  const { data: categoriesData, loading, error } = useCategoriesGraphQL();
+  const {
+    data: categoriesData,
+    isLoading: loading,
+    error,
+  } = useCategoriesGraphQL();
   const categories =
     categoriesData?.productCategories?.nodes?.slice(0, 8) || [];
 
