@@ -89,68 +89,12 @@ export const useProductsGraphQL = (variables?: {
   return useQuery({
     queryKey: ["products-graphql", variables],
     queryFn: async () => {
-      // Query con campos completos pero compatibles
-      const simpleQuery = `
-        query GetProducts($first: Int) {
-          products(first: $first) {
-            nodes {
-              id
-              databaseId
-              name
-              slug
-              type
-              status
-              reviewsAllowed
-              averageRating
-              reviewCount
-              image {
-                id
-                sourceUrl
-                altText
-                title
-              }
-              galleryImages {
-                nodes {
-                  sourceUrl
-                  altText
-                }
-              }
-              ... on SimpleProduct {
-                price
-                regularPrice
-                salePrice
-                stockStatus
-                stockQuantity
-              }
-              ... on VariableProduct {
-                price
-                regularPrice
-                salePrice
-              }
-              ... on ExternalProduct {
-                price
-                regularPrice
-                salePrice
-              }
-              productCategories {
-                nodes {
-                  id
-                  name
-                  slug
-                }
-              }
-            }
-            pageInfo {
-              hasNextPage
-              endCursor
-            }
-          }
-        }
-      `;
-
       try {
-        const data = await makeGraphQLRequest(simpleQuery, {
+        // Usar la query completa que funciona
+        const data = await makeGraphQLRequest(GET_PRODUCTS, {
           first: variables?.first || 20,
+          after: variables?.after,
+          where: variables?.where,
         });
         return data.products;
       } catch (error) {

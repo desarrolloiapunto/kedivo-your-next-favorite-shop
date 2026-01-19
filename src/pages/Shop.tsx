@@ -54,6 +54,21 @@ const Shop = () => {
     ? normalizeProducts(productsData.nodes)
     : [];
 
+  // Debug: mostrar cuántos productos llegan
+  console.log(
+    "Productos crudos desde GraphQL:",
+    productsData?.nodes?.length || 0,
+  );
+  console.log("Productos normalizados:", rawProducts.length);
+  console.log(
+    "Primeros 3 productos:",
+    rawProducts.slice(0, 3).map((p) => ({
+      name: p.name,
+      price: p.price,
+      parsedPrice: cleanPrice(p.price),
+    })),
+  );
+
   // Filter and sort products
   const filteredProducts = useMemo(() => {
     let result = [...rawProducts];
