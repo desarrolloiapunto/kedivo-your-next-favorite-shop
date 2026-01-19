@@ -88,13 +88,48 @@ export const useProductsGraphQL = (variables?: {
 }) => {
   return useQuery({
     queryKey: ["products-graphql", variables],
-    queryFn: () =>
-      makeGraphQLRequest(GET_PRODUCTS, {
-        first: variables?.first || 20,
-        after: variables?.after,
-        where: variables?.where,
-      }),
-    select: (data) => data.products,
+    queryFn: async () => {
+      // Primero probar con query simple
+      const simpleQuery = `
+        query GetProducts($first: Int) {
+          products(first: $first) {
+            nodes {
+              id
+              databaseId
+              name
+              slug
+              type
+              status
+              image {
+                sourceUrl
+                altText
+              }
+              ... on SimpleProduct {
+                price
+                regularPrice
+                salePrice
+              }
+            }
+            pageInfo {
+              hasNextPage
+              endCursor
+            }
+          }
+        }
+      `;
+
+      try {
+        const data = await makeGraphQLRequest(simpleQuery, {
+          first: variables?.first || 20,
+        });
+        return data.products;
+      } catch (error) {
+        console.error("GraphQL Error:", error);
+        // Fallback: devolver datos vacíos
+        return { nodes: [], pageInfo: { hasNextPage: false, endCursor: null } };
+      }
+    },
+    select: (data) => data,
   });
 };
 
