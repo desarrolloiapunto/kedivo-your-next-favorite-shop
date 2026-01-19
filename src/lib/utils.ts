@@ -122,23 +122,29 @@ function determineShipping(product: any): {
     return { isNational, shippingDays };
   }
 
-  // Verificar atributos de envío
-  const shippingAttribute = product.attributes?.find(
-    (attr: any) =>
-      attr.name?.toLowerCase().includes("envio") ||
-      attr.name?.toLowerCase().includes("shipping"),
-  );
-
-  if (shippingAttribute && shippingAttribute.options) {
-    const hasInternational = shippingAttribute.options.some(
-      (option: string) =>
-        option.toLowerCase().includes("internacional") ||
-        option.toLowerCase().includes("internacional"),
+  // Verificar atributos de envío (solo si existen y son un array)
+  if (product.attributes && Array.isArray(product.attributes.nodes)) {
+    const shippingAttribute = product.attributes.nodes.find(
+      (attr: any) =>
+        attr.name?.toLowerCase().includes("envio") ||
+        attr.name?.toLowerCase().includes("shipping"),
     );
 
-    if (hasInternational) {
-      // Si tiene opción internacional, asumimos internacional por defecto
-      return { isNational: false, shippingDays: "15-20 días" };
+    if (
+      shippingAttribute &&
+      shippingAttribute.options &&
+      Array.isArray(shippingAttribute.options)
+    ) {
+      const hasInternational = shippingAttribute.options.some(
+        (option: string) =>
+          option.toLowerCase().includes("internacional") ||
+          option.toLowerCase().includes("internacional"),
+      );
+
+      if (hasInternational) {
+        // Si tiene opción internacional, asumimos internacional por defecto
+        return { isNational: false, shippingDays: "15-20 días" };
+      }
     }
   }
 
