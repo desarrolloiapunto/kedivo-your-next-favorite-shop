@@ -325,14 +325,39 @@ export const GET_PRODUCTS_BY_CATEGORY = `
         databaseId
         name
         slug
-        ... on ProductWithPricing {
+        type
+        status
+        reviewsAllowed
+        averageRating
+        reviewCount
+        image {
+          id
+          sourceUrl
+          altText
+          title
+        }
+        galleryImages {
+          nodes {
+            sourceUrl
+            altText
+          }
+        }
+        ... on SimpleProduct {
+          price
+          regularPrice
+          salePrice
+          stockStatus
+          stockQuantity
+        }
+        ... on VariableProduct {
           price
           regularPrice
           salePrice
         }
-        image {
-          sourceUrl
-          altText
+        ... on ExternalProduct {
+          price
+          regularPrice
+          salePrice
         }
         productCategories {
           nodes {
