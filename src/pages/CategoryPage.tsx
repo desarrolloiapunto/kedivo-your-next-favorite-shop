@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, SlidersHorizontal, X } from "lucide-react";
 import { useProductsByCategoryGraphQL } from "@/lib/hooks/useGraphQL";
-import { normalizeProducts } from "@/lib/utils";
+import { normalizeProducts, cleanPrice } from "@/lib/utils";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import ProductCard from "@/components/home/ProductCard";
@@ -294,10 +294,10 @@ const CategoryPage = () => {
                     key={product.id}
                     id={product.databaseId}
                     name={product.name}
-                    price={parseFloat(product.price || "0")}
+                    price={cleanPrice(product.price)}
                     originalPrice={
                       product.regularPrice
-                        ? parseFloat(product.regularPrice)
+                        ? cleanPrice(product.regularPrice)
                         : undefined
                     }
                     image={product.image?.sourceUrl || ""}

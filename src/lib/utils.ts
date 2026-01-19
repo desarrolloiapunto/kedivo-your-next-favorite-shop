@@ -73,14 +73,28 @@ export interface NormalizedProduct {
 }
 
 // Helper functions for product calculations
+export function cleanPrice(price: string | undefined): number {
+  if (!price) return 0;
+
+  // Remover símbolos de moneda, espacios y caracteres HTML
+  const cleaned = price
+    .replace(/[$,]/g, "") // Remover $ y ,
+    .replace(/&nbsp;/g, "") // Remover &nbsp;
+    .replace(/\s+/g, "") // Remover espacios
+    .trim();
+
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? 0 : parsed;
+}
+
 function calculateDiscount(
   regularPrice: string | undefined,
   salePrice: string | undefined,
 ): number | undefined {
   if (!regularPrice || !salePrice) return undefined;
 
-  const regular = parseFloat(regularPrice);
-  const sale = parseFloat(salePrice);
+  const regular = cleanPrice(regularPrice);
+  const sale = cleanPrice(salePrice);
 
   if (regular <= 0 || sale >= regular) return undefined;
 
