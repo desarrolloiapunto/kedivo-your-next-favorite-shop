@@ -38,11 +38,46 @@ const makeGraphQLRequest = async (query: string, variables?: any) => {
   return data.data;
 };
 
+// Hook para obtener conteo de productos por categoría
+export const useCategoryCounts = () => {
+  return useQuery({
+    queryKey: ["category-counts"],
+    queryFn: async () => {
+      // Obtener todos los productos para contar por categoría
+      const data = await makeGraphQLRequest(GET_PRODUCTS, {
+        first: 1000, // Obtener muchos productos para conteo preciso
+      });
+
+      const products = data.products.nodes;
+
+      // Contar productos por categoría
+      const categoryCounts: Record<string, number> = {};
+
+      products.forEach((product: any) => {
+        if (product.productCategories?.nodes) {
+          product.productCategories.nodes.forEach((cat: any) => {
+            categoryCounts[cat.slug] = (categoryCounts[cat.slug] || 0) + 1;
+          });
+        }
+      });
+
+      return categoryCounts;
+    },
+  });
+};
+
 export const useCategoriesGraphQL = (first: number = 20) => {
+  const { data: countsData } = useCategoryCounts();
+
   return useQuery({
     queryKey: ["categories-graphql", first],
     queryFn: () => makeGraphQLRequest(GET_CATEGORIES, { first }),
-    select: (data) => data.productCategories.nodes,
+    select: (data) => {
+      return data.productCategories.nodes.map((category: any) => ({
+        ...category,
+        count: countsData?.[category.slug] || 0,
+      }));
+    },
   });
 };
 
