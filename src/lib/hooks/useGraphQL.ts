@@ -5,6 +5,7 @@ import {
   GET_PRODUCT,
   GET_PRODUCTS_BY_CATEGORY,
 } from "@/lib/queries";
+import { normalizeProducts, normalizeProduct } from "@/lib/utils";
 
 // Función helper para hacer requests GraphQL con configuración de WooGraphQL
 const makeGraphQLRequest = async (query: string, variables?: any) => {

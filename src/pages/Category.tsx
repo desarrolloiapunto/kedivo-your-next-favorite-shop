@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useProductsByCategoryGraphQL } from "@/lib/hooks/useGraphQL";
+import { normalizeProducts } from "@/lib/utils";
 import ProductGrid from "@/components/home/ProductGrid";
 
 const Category = () => {
@@ -13,7 +14,9 @@ const Category = () => {
     first: 20,
   });
 
-  const products = productsData?.nodes || [];
+  const products = productsData?.nodes
+    ? normalizeProducts(productsData.nodes)
+    : [];
 
   if (loading) {
     return (

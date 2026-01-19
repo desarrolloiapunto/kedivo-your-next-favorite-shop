@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useProductsGraphQL } from "@/lib/hooks/useGraphQL";
+import { normalizeProducts } from "@/lib/utils";
 import ProductGrid from "@/components/home/ProductGrid";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,9 @@ const Shop = () => {
     where: selectedCategory ? { category: selectedCategory } : undefined,
   });
 
-  const products = productsData?.nodes || [];
+  const products = productsData?.nodes
+    ? normalizeProducts(productsData.nodes)
+    : [];
 
   const filteredProducts =
     products?.filter((product: any) =>
