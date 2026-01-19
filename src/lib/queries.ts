@@ -7,12 +7,13 @@ export const GET_CATEGORIES = `
         databaseId
         name
         slug
-        count
         image {
           sourceUrl
           altText
         }
         display
+        # Nota: El campo 'count' puede no estar disponible en WooGraphQL
+        # Usaremos una aproximación o lo calcularemos de otra manera
       }
     }
   }
@@ -22,7 +23,7 @@ export const GET_PRODUCTS = `
   query GetProducts(
     $first: Int = 20
     $after: String
-    $where: RootQueryToProductConnectionWhereArgs
+    $where: RootQueryToProductUnionConnectionWhereArgs
   ) {
     products(first: $first, after: $after, where: $where) {
       nodes {
@@ -39,9 +40,6 @@ export const GET_PRODUCTS = `
         catalogVisibility
         purchasable
         virtual
-        downloadable
-        externalUrl
-        buttonText
         reviewsAllowed
         averageRating
         reviewCount
@@ -59,42 +57,37 @@ export const GET_PRODUCTS = `
             title
           }
         }
-        ... on ProductWithPricing {
+        ... on SimpleProduct {
+          price
+          regularPrice
+          salePrice
+          stockStatus
+          stockQuantity
+          manageStock
+          backorders
+          backordersAllowed
+          soldIndividually
+          weight
+          ... on DownloadableProduct {
+            downloads {
+              nodes {
+                name
+                file
+              }
+            }
+          }
+        }
+        ... on VariableProduct {
           price
           regularPrice
           salePrice
         }
-        ... on SimpleProduct {
-          stockStatus
-          stockQuantity
-          manageStock
-          backorders
-          backordersAllowed
-          soldIndividually
-          weight
-          dimensions {
-            length
-            width
-            height
-          }
-        }
-        ... on VariableProduct {
-          stockStatus
-          stockQuantity
-          manageStock
-          backorders
-          backordersAllowed
-          soldIndividually
-          weight
-          dimensions {
-            length
-            width
-            height
-          }
-        }
         ... on ExternalProduct {
           externalUrl
           buttonText
+          price
+          regularPrice
+          salePrice
         }
         ... on GroupProduct {
           products {
@@ -119,28 +112,28 @@ export const GET_PRODUCTS = `
             slug
           }
         }
-        attributes {
-          nodes {
-            id
-            name
-            label
-            options
-            position
-            visible
-            variation
+        ... on ProductWithAttributes {
+          attributes {
+            nodes {
+              id
+              name
+              label
+              options
+              position
+              visible
+              variation
+            }
           }
         }
-        variations {
-          nodes {
-            id
-            name
-            sku
-            ... on ProductVariationWithPricing {
+        ... on ProductWithVariations {
+          variations {
+            nodes {
+              id
+              name
+              sku
               price
               regularPrice
               salePrice
-            }
-            ... on ProductVariation {
               stockStatus
               stockQuantity
               attributes {
@@ -150,12 +143,6 @@ export const GET_PRODUCTS = `
                 }
               }
             }
-          }
-        }
-        downloads {
-          nodes {
-            name
-            file
           }
         }
         metaData {
@@ -168,7 +155,6 @@ export const GET_PRODUCTS = `
         hasPreviousPage
         startCursor
         endCursor
-        total
       }
     }
   }
@@ -190,9 +176,6 @@ export const GET_PRODUCT = `
       catalogVisibility
       purchasable
       virtual
-      downloadable
-      externalUrl
-      buttonText
       reviewsAllowed
       averageRating
       reviewCount
@@ -210,42 +193,37 @@ export const GET_PRODUCT = `
           title
         }
       }
-      ... on ProductWithPricing {
+      ... on SimpleProduct {
+        price
+        regularPrice
+        salePrice
+        stockStatus
+        stockQuantity
+        manageStock
+        backorders
+        backordersAllowed
+        soldIndividually
+        weight
+        ... on DownloadableProduct {
+          downloads {
+            nodes {
+              name
+              file
+            }
+          }
+        }
+      }
+      ... on VariableProduct {
         price
         regularPrice
         salePrice
       }
-      ... on SimpleProduct {
-        stockStatus
-        stockQuantity
-        manageStock
-        backorders
-        backordersAllowed
-        soldIndividually
-        weight
-        dimensions {
-          length
-          width
-          height
-        }
-      }
-      ... on VariableProduct {
-        stockStatus
-        stockQuantity
-        manageStock
-        backorders
-        backordersAllowed
-        soldIndividually
-        weight
-        dimensions {
-          length
-          width
-          height
-        }
-      }
       ... on ExternalProduct {
         externalUrl
         buttonText
+        price
+        regularPrice
+        salePrice
       }
       ... on GroupProduct {
         products {
@@ -270,28 +248,28 @@ export const GET_PRODUCT = `
           slug
         }
       }
-      attributes {
-        nodes {
-          id
-          name
-          label
-          options
-          position
-          visible
-          variation
+      ... on ProductWithAttributes {
+        attributes {
+          nodes {
+            id
+            name
+            label
+            options
+            position
+            visible
+            variation
+          }
         }
       }
-      variations {
-        nodes {
-          id
-          name
-          sku
-          ... on ProductVariationWithPricing {
+      ... on ProductWithVariations {
+        variations {
+          nodes {
+            id
+            name
+            sku
             price
             regularPrice
             salePrice
-          }
-          ... on ProductVariation {
             stockStatus
             stockQuantity
             attributes {
@@ -309,7 +287,17 @@ export const GET_PRODUCT = `
           databaseId
           name
           slug
-          ... on ProductWithPricing {
+          ... on SimpleProduct {
+            price
+            regularPrice
+            salePrice
+          }
+          ... on VariableProduct {
+            price
+            regularPrice
+            salePrice
+          }
+          ... on ExternalProduct {
             price
             regularPrice
             salePrice
@@ -318,12 +306,6 @@ export const GET_PRODUCT = `
             sourceUrl
             altText
           }
-        }
-      }
-      downloads {
-        nodes {
-          name
-          file
         }
       }
       metaData {
