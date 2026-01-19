@@ -68,35 +68,11 @@ export const GET_PRODUCTS = `
           backordersAllowed
           soldIndividually
           weight
-          ... on DownloadableProduct {
-            downloads {
-              nodes {
-                name
-                file
-              }
-            }
-          }
         }
         ... on VariableProduct {
           price
           regularPrice
           salePrice
-        }
-        ... on ExternalProduct {
-          externalUrl
-          buttonText
-          price
-          regularPrice
-          salePrice
-        }
-        ... on GroupProduct {
-          products {
-            nodes {
-              id
-              name
-              slug
-            }
-          }
         }
         productCategories {
           nodes {
@@ -204,35 +180,11 @@ export const GET_PRODUCT = `
         backordersAllowed
         soldIndividually
         weight
-        ... on DownloadableProduct {
-          downloads {
-            nodes {
-              name
-              file
-            }
-          }
-        }
       }
       ... on VariableProduct {
         price
         regularPrice
         salePrice
-      }
-      ... on ExternalProduct {
-        externalUrl
-        buttonText
-        price
-        regularPrice
-        salePrice
-      }
-      ... on GroupProduct {
-        products {
-          nodes {
-            id
-            name
-            slug
-          }
-        }
       }
       productCategories {
         nodes {
@@ -297,11 +249,6 @@ export const GET_PRODUCT = `
             regularPrice
             salePrice
           }
-          ... on ExternalProduct {
-            price
-            regularPrice
-            salePrice
-          }
           image {
             sourceUrl
             altText
@@ -350,11 +297,6 @@ export const GET_PRODUCTS_BY_CATEGORY = `
           stockQuantity
         }
         ... on VariableProduct {
-          price
-          regularPrice
-          salePrice
-        }
-        ... on ExternalProduct {
           price
           regularPrice
           salePrice
