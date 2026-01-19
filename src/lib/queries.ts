@@ -33,25 +33,25 @@ export const GET_PRODUCTS = `
         description
         shortDescription
         sku
-        price
-        regularPrice
-        salePrice
-        stockStatus
-        stockQuantity
-        manageStock
-        backorders
-        backordersAllowed
-        soldIndividually
-        weight
-        dimensions {
-          length
-          width
-          height
-        }
+        type
+        status
+        featured
+        catalogVisibility
+        purchasable
+        virtual
+        downloadable
+        externalUrl
+        buttonText
         reviewsAllowed
         averageRating
         reviewCount
-        images {
+        image {
+          id
+          sourceUrl
+          altText
+          title
+        }
+        galleryImages {
           nodes {
             id
             sourceUrl
@@ -59,14 +59,60 @@ export const GET_PRODUCTS = `
             title
           }
         }
-        categories {
+        ... on ProductWithPricing {
+          price
+          regularPrice
+          salePrice
+        }
+        ... on SimpleProduct {
+          stockStatus
+          stockQuantity
+          manageStock
+          backorders
+          backordersAllowed
+          soldIndividually
+          weight
+          dimensions {
+            length
+            width
+            height
+          }
+        }
+        ... on VariableProduct {
+          stockStatus
+          stockQuantity
+          manageStock
+          backorders
+          backordersAllowed
+          soldIndividually
+          weight
+          dimensions {
+            length
+            width
+            height
+          }
+        }
+        ... on ExternalProduct {
+          externalUrl
+          buttonText
+        }
+        ... on GroupProduct {
+          products {
+            nodes {
+              id
+              name
+              slug
+            }
+          }
+        }
+        productCategories {
           nodes {
             id
             name
             slug
           }
         }
-        tags {
+        productTags {
           nodes {
             id
             name
@@ -89,34 +135,33 @@ export const GET_PRODUCTS = `
             id
             name
             sku
-            price
-            regularPrice
-            salePrice
-            stockStatus
-            stockQuantity
-            attributes {
-              nodes {
-                name
-                value
+            ... on ProductVariationWithPricing {
+              price
+              regularPrice
+              salePrice
+            }
+            ... on ProductVariation {
+              stockStatus
+              stockQuantity
+              attributes {
+                nodes {
+                  name
+                  value
+                }
               }
             }
           }
         }
-        type
-        status
-        featured
-        catalogVisibility
-        purchasable
-        virtual
-        downloadable
         downloads {
           nodes {
             name
             file
           }
         }
-        externalUrl
-        buttonText
+        metaData {
+          key
+          value
+        }
       }
       pageInfo {
         hasNextPage
@@ -139,25 +184,25 @@ export const GET_PRODUCT = `
       description
       shortDescription
       sku
-      price
-      regularPrice
-      salePrice
-      stockStatus
-      stockQuantity
-      manageStock
-      backorders
-      backordersAllowed
-      soldIndividually
-      weight
-      dimensions {
-        length
-        width
-        height
-      }
+      type
+      status
+      featured
+      catalogVisibility
+      purchasable
+      virtual
+      downloadable
+      externalUrl
+      buttonText
       reviewsAllowed
       averageRating
       reviewCount
-      images {
+      image {
+        id
+        sourceUrl
+        altText
+        title
+      }
+      galleryImages {
         nodes {
           id
           sourceUrl
@@ -165,14 +210,60 @@ export const GET_PRODUCT = `
           title
         }
       }
-      categories {
+      ... on ProductWithPricing {
+        price
+        regularPrice
+        salePrice
+      }
+      ... on SimpleProduct {
+        stockStatus
+        stockQuantity
+        manageStock
+        backorders
+        backordersAllowed
+        soldIndividually
+        weight
+        dimensions {
+          length
+          width
+          height
+        }
+      }
+      ... on VariableProduct {
+        stockStatus
+        stockQuantity
+        manageStock
+        backorders
+        backordersAllowed
+        soldIndividually
+        weight
+        dimensions {
+          length
+          width
+          height
+        }
+      }
+      ... on ExternalProduct {
+        externalUrl
+        buttonText
+      }
+      ... on GroupProduct {
+        products {
+          nodes {
+            id
+            name
+            slug
+          }
+        }
+      }
+      productCategories {
         nodes {
           id
           name
           slug
         }
       }
-      tags {
+      productTags {
         nodes {
           id
           name
@@ -195,51 +286,46 @@ export const GET_PRODUCT = `
           id
           name
           sku
-          price
-          regularPrice
-          salePrice
-          stockStatus
-          stockQuantity
-          attributes {
-            nodes {
-              name
-              value
-            }
+          ... on ProductVariationWithPricing {
+            price
+            regularPrice
+            salePrice
+          }
+          ... on ProductVariation {
+            stockStatus
+            stockQuantity
+            attributes {
+              nodes {
+                name
+                value
+              }
             }
           }
         }
+      }
       related {
         nodes {
           id
           databaseId
           name
           slug
-          price
-          regularPrice
-          salePrice
-          images {
-            nodes {
-              sourceUrl
-              altText
-            }
+          ... on ProductWithPricing {
+            price
+            regularPrice
+            salePrice
+          }
+          image {
+            sourceUrl
+            altText
           }
         }
       }
-      type
-      status
-      featured
-      catalogVisibility
-      purchasable
-      virtual
-      downloadable
       downloads {
         nodes {
           name
           file
         }
       }
-      externalUrl
-      buttonText
       metaData {
         key
         value
@@ -257,16 +343,16 @@ export const GET_PRODUCTS_BY_CATEGORY = `
         databaseId
         name
         slug
-        price
-        regularPrice
-        salePrice
-        images {
-          nodes {
-            sourceUrl
-            altText
-          }
+        ... on ProductWithPricing {
+          price
+          regularPrice
+          salePrice
         }
-        categories {
+        image {
+          sourceUrl
+          altText
+        }
+        productCategories {
           nodes {
             id
             name
