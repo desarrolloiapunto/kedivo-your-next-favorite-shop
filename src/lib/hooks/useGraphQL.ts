@@ -14,10 +14,7 @@ const makeGraphQLRequest = async (query: string, variables?: any) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Incluir cookies para sesiones de usuario según WooGraphQL docs
-        credentials: "include",
       },
-      credentials: "include", // Importante para sesiones de usuario
       body: JSON.stringify({
         query,
         variables,
