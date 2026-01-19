@@ -54,21 +54,6 @@ const Shop = () => {
     ? normalizeProducts(productsData.nodes)
     : [];
 
-  // Debug: mostrar cuántos productos llegan
-  console.log(
-    "Productos crudos desde GraphQL:",
-    productsData?.nodes?.length || 0,
-  );
-  console.log("Productos normalizados:", rawProducts.length);
-  console.log(
-    "Primeros 3 productos:",
-    rawProducts.slice(0, 3).map((p) => ({
-      name: p.name,
-      price: p.price,
-      parsedPrice: cleanPrice(p.price),
-    })),
-  );
-
   // Filter and sort products
   const filteredProducts = useMemo(() => {
     let result = [...rawProducts];
@@ -113,6 +98,26 @@ const Shop = () => {
   const paginatedProducts = filteredProducts.slice(
     (currentPage - 1) * PRODUCTS_PER_PAGE,
     currentPage * PRODUCTS_PER_PAGE,
+  );
+
+  // Debug: mostrar estadísticas completas
+  console.log(
+    "Productos crudos desde GraphQL:",
+    productsData?.nodes?.length || 0,
+  );
+  console.log("Productos normalizados:", rawProducts.length);
+  console.log("Productos filtrados:", filteredProducts.length);
+  console.log("Productos en página actual:", paginatedProducts.length);
+  console.log("Productos por página:", PRODUCTS_PER_PAGE);
+  console.log("Página actual:", currentPage);
+  console.log("Total páginas:", totalPages);
+  console.log(
+    "Primeros 3 productos:",
+    rawProducts.slice(0, 3).map((p) => ({
+      name: p.name,
+      price: p.price,
+      parsedPrice: cleanPrice(p.price),
+    })),
   );
 
   const clearFilters = () => {
