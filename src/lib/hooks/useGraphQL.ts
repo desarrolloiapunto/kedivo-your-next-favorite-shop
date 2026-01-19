@@ -89,7 +89,7 @@ export const useProductsGraphQL = (variables?: {
   return useQuery({
     queryKey: ["products-graphql", variables],
     queryFn: async () => {
-      // Primero probar con query simple
+      // Query con campos completos pero compatibles
       const simpleQuery = `
         query GetProducts($first: Int) {
           products(first: $first) {
@@ -100,14 +100,44 @@ export const useProductsGraphQL = (variables?: {
               slug
               type
               status
+              reviewsAllowed
+              averageRating
+              reviewCount
               image {
+                id
                 sourceUrl
                 altText
+                title
+              }
+              galleryImages {
+                nodes {
+                  sourceUrl
+                  altText
+                }
               }
               ... on SimpleProduct {
                 price
                 regularPrice
                 salePrice
+                stockStatus
+                stockQuantity
+              }
+              ... on VariableProduct {
+                price
+                regularPrice
+                salePrice
+              }
+              ... on ExternalProduct {
+                price
+                regularPrice
+                salePrice
+              }
+              productCategories {
+                nodes {
+                  id
+                  name
+                  slug
+                }
               }
             }
             pageInfo {
