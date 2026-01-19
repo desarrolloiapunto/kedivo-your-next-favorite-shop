@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useProducts } from "@/lib/useWooCommerce";
+import { useProductsGraphQL } from "@/lib/hooks/useGraphQL";
 import ProductGrid from "@/components/home/ProductGrid";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -10,13 +10,15 @@ const Shop = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const {
-    data: products,
-    isLoading,
+    data: productsData,
+    loading: isLoading,
     error,
-  } = useProducts({
-    per_page: 20,
-    ...(selectedCategory && { category: selectedCategory }),
+  } = useProductsGraphQL({
+    first: 20,
+    where: selectedCategory ? { category: selectedCategory } : undefined,
   });
+
+  const products = productsData?.products?.nodes || [];
 
   const filteredProducts =
     products?.filter((product: any) =>
