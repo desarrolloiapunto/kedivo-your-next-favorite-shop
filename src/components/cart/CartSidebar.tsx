@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, X, Minus, Plus, Trash2, Tag, Truck, Gift, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +20,7 @@ const upsellProducts = [
 
 const CartSidebar = () => {
   const { items, isOpen, closeCart, removeItem, updateQuantity, subtotal, discount, total, coupon, applyCoupon, removeCoupon, totalItems, addItem } = useCart();
+  const navigate = useNavigate();
   const [couponCode, setCouponCode] = useState('');
 
   const handleApplyCoupon = () => {
@@ -177,7 +179,7 @@ const CartSidebar = () => {
               </div>
 
               {/* Checkout */}
-              <Button className="w-full btn-vitality rounded-xl py-6 text-lg group" onClick={() => toast.success('Redirigiendo al checkout...')}>
+              <Button className="w-full btn-vitality rounded-xl py-6 text-lg group" onClick={() => { closeCart(); navigate('/checkout'); }}>
                 Ir a pagar
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
