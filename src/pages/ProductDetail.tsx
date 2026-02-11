@@ -22,6 +22,7 @@ import ShippingCalculator from '@/components/product/ShippingCalculator';
 import ProductReviews from '@/components/product/ProductReviews';
 import ProductUpsell from '@/components/product/ProductUpsell';
 import { toast } from 'sonner';
+import { useCart } from '@/contexts/CartContext';
 
 const productData = {
   id: 1,
@@ -64,6 +65,7 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   const [selectedColor, setSelectedColor] = useState(productData.colors[0]);
   const [isFavorite, setIsFavorite] = useState(false);
+  const { addItem } = useCart();
 
   const formatPrice = (value: number) => {
     return new Intl.NumberFormat('es-CO', {
@@ -74,6 +76,15 @@ const ProductDetail = () => {
   };
 
   const handleAddToCart = () => {
+    addItem({
+      id: productData.id,
+      name: productData.name,
+      price: productData.price,
+      originalPrice: productData.originalPrice,
+      image: productData.images[0],
+      color: selectedColor.name,
+      isNational: productData.isNational,
+    }, quantity);
     toast.success('¡Producto agregado al carrito!', {
       description: `${productData.name} x ${quantity}`,
     });
