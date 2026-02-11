@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ShoppingCart, User, Heart, Menu, ChevronDown, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import MegaMenu from './MegaMenu';
+import { useCart } from '@/contexts/CartContext';
 
 const searchSuggestions = [
   'iPhone 15 Pro Max',
@@ -21,6 +22,7 @@ const Header = () => {
   const [showMegaMenu, setShowMegaMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
+  const { openCart, totalItems } = useCart();
 
   const filteredSuggestions = searchSuggestions.filter(item =>
     item.toLowerCase().includes(searchQuery.toLowerCase())
@@ -117,12 +119,19 @@ const Header = () => {
                 <Heart className="w-6 h-6" />
                 <span className="text-xs mt-1">Favoritos</span>
               </button>
-              <button className="relative flex flex-col items-center text-muted-foreground hover:text-deep-space transition-colors">
+              <button onClick={openCart} className="relative flex flex-col items-center text-muted-foreground hover:text-deep-space transition-colors">
                 <ShoppingCart className="w-6 h-6" />
                 <span className="text-xs mt-1 hidden md:block">Carrito</span>
-                <span className="absolute -top-1 -right-1 bg-vitality text-accent-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
-                  3
-                </span>
+                {totalItems > 0 && (
+                  <motion.span
+                    key={totalItems}
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className="absolute -top-1 -right-1 bg-vitality text-accent-foreground text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold"
+                  >
+                    {totalItems}
+                  </motion.span>
+                )}
               </button>
               <Button
                 variant="ghost"
